@@ -18,5 +18,9 @@
         android:id="@+id/contentFragment"
         android:name="com.example.testtaskforshiftlab.presentation.ContentFragment"
         android:label="fragment_content"
-        tools:layout="@layout/fragment_content" />
+        tools:layout="@layout/fragment_content" >
+        <argument
+            android:name="user"
+            app:argType="com.example.testtaskforshiftlab.domain.entity.User" />
+    </fragment>
 </navigation>
