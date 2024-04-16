@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">TestTaskForSHIFTLab</string>
+    <string name="password_hint">Пароль</string>
+    <string name="confirm_password_hint">Подтверждение пароля</string>
+    <string name="btn_registration">Регистрация</string>
+    <string name="birth_hint">Дата рождения</string>
+    <string name="surname_hint">Фамилия</string>
+    <string name="name_hint">Имя</string>
+    <string name="btn_hello">Приветствие</string>
 </resources>
