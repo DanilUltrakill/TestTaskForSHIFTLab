@@ -64,8 +64,7 @@ class RegistrationFragment: Fragment() {
 
     private fun clearInputs() {
         with(binding) {
-            etName.setText("")
-            tilName.clearFocus()
+            etName.text = null
             etSurname.text = null
             etPassword.text = null
             etConfirmPassword.text = null
@@ -219,8 +218,5 @@ class RegistrationFragment: Fragment() {
     }
 
     companion object {
-        fun newInstance(): RegistrationFragment {
-            return RegistrationFragment()
-        }
     }
 }
