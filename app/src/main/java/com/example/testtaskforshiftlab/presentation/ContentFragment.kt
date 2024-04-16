@@ -11,7 +11,7 @@ import com.example.testtaskforshiftlab.R
 import com.example.testtaskforshiftlab.databinding.FragmentContentBinding
 import com.example.testtaskforshiftlab.domain.entity.User
 
-class ContentFragment: Fragment() {
+class ContentFragment : Fragment() {
 
     private var _binding: FragmentContentBinding? = null
     private val binding: FragmentContentBinding
@@ -33,17 +33,24 @@ class ContentFragment: Fragment() {
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+            })
 
         binding.btnHello.setOnClickListener {
             val builder = AlertDialog.Builder(requireContext())
                 .setTitle(R.string.modal_window)
                 .setMessage(String.format(getString(R.string.hello_user), user.name))
-                .setPositiveButton("OK") { dialog, _ ->
-                    dialog.cancel()
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
+                .setPositiveButton(getString(R.string.close_modal_window)) { dialog, _ ->
                     dialog.cancel()
                 }
 
@@ -62,7 +69,8 @@ class ContentFragment: Fragment() {
             user = it
         }
     }
-    companion object{
+
+    companion object {
         private const val KEY_USER = "user"
 
         fun newInstance(user: User): ContentFragment {

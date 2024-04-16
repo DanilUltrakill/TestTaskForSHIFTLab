@@ -57,9 +57,15 @@ class RegistrationFragment: Fragment() {
         addTextChangeListeners()
     }
 
+    override fun onResume() {
+        super.onResume()
+        clearInputs()
+    }
+
     private fun clearInputs() {
         with(binding) {
-            etName.text = null
+            etName.setText("")
+            tilName.clearFocus()
             etSurname.text = null
             etPassword.text = null
             etConfirmPassword.text = null
@@ -183,7 +189,6 @@ class RegistrationFragment: Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        clearInputs()
         _binding = null
     }
 
