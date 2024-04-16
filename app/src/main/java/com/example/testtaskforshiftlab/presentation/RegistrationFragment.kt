@@ -51,7 +51,7 @@ class RegistrationFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[RegistrationViewModel::class.java]
         setTodayDate()
-        binding.btnDatePicker.text = date.getDateString()
+        binding.btnDatePicker.text = date.toString()
         observeViewModel()
         setOnClickListeners()
         addTextChangeListeners()
@@ -197,7 +197,7 @@ class RegistrationFragment: Fragment() {
                 var curMonth = month
                 curMonth += 1
                 date = BirthDate(day, curMonth, year)
-                binding.btnDatePicker.text = date.getDateString()
+                binding.btnDatePicker.text = date.toString()
             }
         val cal = Calendar.getInstance()
         val year = cal.get(Calendar.YEAR)

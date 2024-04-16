@@ -9,7 +9,8 @@ data class BirthDate(
     val month: Int,
     val year: Int
 ): Parcelable {
-    fun getDateString(): String {
+
+    override fun toString(): String {
         return "$day/$month/$year"
     }
 }

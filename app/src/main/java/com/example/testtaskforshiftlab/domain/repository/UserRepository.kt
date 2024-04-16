@@ -7,4 +7,6 @@ interface UserRepository {
     fun addUser(user: User)
 
     fun getUser(): User
+
+    fun removeUser()
 }
