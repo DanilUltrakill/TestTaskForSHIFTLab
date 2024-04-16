@@ -7,4 +7,9 @@
     <string name="surname_hint">Фамилия</string>
     <string name="name_hint">Имя</string>
     <string name="btn_hello">Приветствие</string>
+    <string name="default_data">JAN 01 2024</string>
+    <string name="error_input_name">Недопустимый формат: только латиница и кириллица</string>
+    <string name="error_input_password">Минимум 5 символов</string>
+    <string name="error_input_confirm_password">Пароли не совпадают</string>
+    <string name="error_input_birth">Год рождения должен быть меньше 2010</string>
 </resources>
