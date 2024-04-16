@@ -6,5 +6,5 @@ interface UserRepository {
 
     fun addUser(user: User)
 
-    fun getUser(user: User): Boolean
+    fun getUser(): User
 }
