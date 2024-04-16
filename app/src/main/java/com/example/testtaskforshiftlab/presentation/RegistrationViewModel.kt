@@ -27,17 +27,10 @@ class RegistrationViewModel: ViewModel() {
     val errorInputPassword: LiveData<Boolean>
         get() = _errorInputPassword
 
-    private val _errorInputConfirmPassword = MutableLiveData<Boolean>()
-    val errorInputConfirmPassword: LiveData<Boolean>
-        get() = _errorInputConfirmPassword
-
     private val _errorMatchPasswords = MutableLiveData<Boolean>()
     val errorMatchPasswords: LiveData<Boolean>
         get() = _errorMatchPasswords
 
-    private val _shouldCloseScreen = MutableLiveData<Unit>()
-    val shouldCloseScreen: LiveData<Unit>
-        get() = _shouldCloseScreen
 
     private val _userData = MutableLiveData<User>()
     val userData: LiveData<User>
@@ -47,20 +40,13 @@ class RegistrationViewModel: ViewModel() {
     val registrationIsActive: LiveData<Boolean>
         get() = _registrationIsActive
 
-    fun registrationClick(inputName: String?, inputSurname: String?, inputBirth: BirthDate, inputPassword: String?, inputConfirmPassword: String?) {
+    fun registrationClick(inputName: String?, inputSurname: String?, inputBirth: BirthDate, inputPassword: String?, inputConfirmPassword: String?):Boolean {
         val name = parseInput(inputName)
         val surname = parseInput(inputSurname)
         val password = parseInput(inputPassword)
         val confirmPassword = parseInput(inputConfirmPassword)
 
-        if (validateInput(name, surname, inputBirth, password, confirmPassword)) {
-            _userData.value = User(name, surname, inputBirth, password)
-            finishWork()
-        }
-    }
-
-    private fun finishWork() {
-        _shouldCloseScreen.value = Unit
+        return validateInput(name, surname, inputBirth, password, confirmPassword)
     }
 
     private fun parseInput(input: String?): String {
@@ -86,7 +72,7 @@ class RegistrationViewModel: ViewModel() {
             result = false
         }
         if (!passwordsIsMatch(password, confirmPassword)) {
-            _errorInputConfirmPassword.value = true
+            _errorMatchPasswords.value = true
             result = false
         }
         return result
@@ -130,7 +116,7 @@ class RegistrationViewModel: ViewModel() {
         _errorInputPassword.value = false
     }
     fun resetErrorInputConfirmPassword() {
-        _errorInputConfirmPassword.value = false
+        _errorMatchPasswords.value = false
     }
     fun resetErrorInputBirth() {
         _errorInputBirth.value = false

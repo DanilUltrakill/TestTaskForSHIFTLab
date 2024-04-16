@@ -12,4 +12,7 @@
     <string name="error_input_password">Минимум 5 символов</string>
     <string name="error_input_confirm_password">Пароли не совпадают</string>
     <string name="error_input_birth">Год рождения должен быть меньше 2010</string>
+    <string name="modal_window">Окно приветствия!</string>
+    <string name="hello_user">Приветствую Вас, %s!</string>
+    <string name="close_modal_window">Привет</string>
 </resources>

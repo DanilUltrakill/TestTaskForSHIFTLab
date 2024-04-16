@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.testtaskforshiftlab.R
 import com.example.testtaskforshiftlab.databinding.FragmentRegistrationBinding
 import com.example.testtaskforshiftlab.domain.entity.BirthDate
@@ -56,6 +57,21 @@ class RegistrationFragment: Fragment() {
         addTextChangeListeners()
     }
 
+    override fun onResume() {
+        super.onResume()
+        clearInputs()
+    }
+
+    private fun clearInputs() {
+        with(binding) {
+            etName.setText("")
+            tilName.clearFocus()
+            etSurname.text = null
+            etPassword.text = null
+            etConfirmPassword.text = null
+        }
+    }
+
     private fun setOnClickListeners() {
         with(binding) {
             btnDatePicker.setOnClickListener {
@@ -63,13 +79,14 @@ class RegistrationFragment: Fragment() {
                 datePickerDialog.show()
             }
             btnRegistration.setOnClickListener {
-                viewModel.registrationClick(
+                if (viewModel.registrationClick(
                     binding.etName.text.toString(),
                     binding.etSurname.text.toString(),
                     date,
                     binding.etPassword.text.toString(),
                     binding.etConfirmPassword.text.toString()
-                )
+                ))
+                    launchContentFragment()
             }
         }
     }
@@ -154,10 +171,6 @@ class RegistrationFragment: Fragment() {
             }
             binding.tilBirth.error = message
         }
-
-        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            launchContentFragment()
-        }
     }
 
     private fun launchContentFragment() {
@@ -167,9 +180,11 @@ class RegistrationFragment: Fragment() {
             date,
             binding.etPassword.text.toString(),
             )
-
         Log.d("RegistrationFragment", newUser.toString())
-        Toast.makeText(requireContext(), "$newUser", Toast.LENGTH_LONG).show()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, ContentFragment.newInstance(newUser))
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {
@@ -201,5 +216,11 @@ class RegistrationFragment: Fragment() {
         month += 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         date = BirthDate(day, month, year)
+    }
+
+    companion object {
+        fun newInstance(): RegistrationFragment {
+            return RegistrationFragment()
+        }
     }
 }
