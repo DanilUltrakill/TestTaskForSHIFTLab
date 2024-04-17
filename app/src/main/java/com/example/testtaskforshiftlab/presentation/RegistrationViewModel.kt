@@ -1,15 +1,27 @@
 package com.example.testtaskforshiftlab.presentation
 
-import android.icu.util.Calendar
+import android.app.Application
+import android.content.Context.MODE_PRIVATE
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.example.testtaskforshiftlab.data.UserRepositoryImpl
 import com.example.testtaskforshiftlab.domain.entity.BirthDate
 import com.example.testtaskforshiftlab.domain.entity.User
+import com.example.testtaskforshiftlab.domain.usecases.AddUserUseCase
+import com.example.testtaskforshiftlab.domain.usecases.GetUserUseCase
 
-class RegistrationViewModel: ViewModel() {
+class RegistrationViewModel(application: Application) : AndroidViewModel(application) {
 
-    private lateinit var user: User
+    private val repository = UserRepositoryImpl(
+        application.getSharedPreferences(
+            KEY_SHARED_PREF,
+            MODE_PRIVATE
+        )
+    )
+
+    private val addUserUseCase = AddUserUseCase(repository)
+    private val getUserUseCase = GetUserUseCase(repository)
 
     private val _errorInputName = MutableLiveData<Boolean>()
     val errorInputName: LiveData<Boolean>
@@ -32,28 +44,47 @@ class RegistrationViewModel: ViewModel() {
         get() = _errorMatchPasswords
 
 
-    private val _userData = MutableLiveData<User>()
-    val userData: LiveData<User>
-        get() = _userData
+    private val _regIsValid = MutableLiveData<Boolean>()
+    val regIsValid: LiveData<Boolean>
+        get() = _regIsValid
 
-    private val _registrationIsActive = MutableLiveData<Boolean>()
-    val registrationIsActive: LiveData<Boolean>
-        get() = _registrationIsActive
+    fun checkUser() {
+        getUserUseCase()?.let {
+            _regIsValid.value = true
+        }
+    }
 
-    fun registrationClick(inputName: String?, inputSurname: String?, inputBirth: BirthDate, inputPassword: String?, inputConfirmPassword: String?):Boolean {
+    fun registrationClick(
+        inputName: String?,
+        inputSurname: String?,
+        inputBirth: BirthDate,
+        inputPassword: String?,
+        inputConfirmPassword: String?
+    ) {
         val name = parseInput(inputName)
         val surname = parseInput(inputSurname)
         val password = parseInput(inputPassword)
         val confirmPassword = parseInput(inputConfirmPassword)
 
-        return validateInput(name, surname, inputBirth, password, confirmPassword)
+        if (validateInput(name, surname, inputBirth, password, confirmPassword)) {
+            val newUser = User(name, surname, inputBirth, password)
+            addUserUseCase(newUser)
+            _regIsValid.value = true
+        } else
+            _regIsValid.value = false
     }
 
     private fun parseInput(input: String?): String {
         return input?.trim() ?: ""
     }
 
-    private fun validateInput(name: String, surname: String, birth: BirthDate, password: String, confirmPassword: String): Boolean {
+    private fun validateInput(
+        name: String,
+        surname: String,
+        birth: BirthDate,
+        password: String,
+        confirmPassword: String
+    ): Boolean {
         var result = true
         if (!validateName(name)) {
             _errorInputName.value = true
@@ -109,15 +140,19 @@ class RegistrationViewModel: ViewModel() {
     fun resetErrorInputName() {
         _errorInputName.value = false
     }
+
     fun resetErrorInputSurname() {
         _errorInputSurname.value = false
     }
+
     fun resetErrorInputPassword() {
         _errorInputPassword.value = false
     }
+
     fun resetErrorInputConfirmPassword() {
         _errorMatchPasswords.value = false
     }
+
     fun resetErrorInputBirth() {
         _errorInputBirth.value = false
     }
@@ -128,6 +163,7 @@ class RegistrationViewModel: ViewModel() {
         private const val MAX_INPUT_NAME = 15
         private const val MIN_INPUT_PASSWORD = 5
         private const val MAX_INPUT_YEAR = 2010
+        const val KEY_SHARED_PREF = "myPrefs"
     }
 
 }

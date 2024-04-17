@@ -7,21 +7,17 @@ import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.testtaskforshiftlab.R
 import com.example.testtaskforshiftlab.databinding.FragmentRegistrationBinding
 import com.example.testtaskforshiftlab.domain.entity.BirthDate
-import com.example.testtaskforshiftlab.domain.entity.User
 
 
-class RegistrationFragment: Fragment() {
+class RegistrationFragment : Fragment() {
 
     private lateinit var viewModel: RegistrationViewModel
 
@@ -50,8 +46,8 @@ class RegistrationFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[RegistrationViewModel::class.java]
+        viewModel.checkUser()
         setTodayDate()
-        binding.btnDatePicker.text = date.toString()
         observeViewModel()
         setOnClickListeners()
         addTextChangeListeners()
@@ -73,19 +69,18 @@ class RegistrationFragment: Fragment() {
 
     private fun setOnClickListeners() {
         with(binding) {
-            btnDatePicker.setOnClickListener {
+            tilBirth.setEndIconOnClickListener {
                 viewModel.resetErrorInputBirth()
                 datePickerDialog.show()
             }
             btnRegistration.setOnClickListener {
-                if (viewModel.registrationClick(
+                viewModel.registrationClick(
                     binding.etName.text.toString(),
                     binding.etSurname.text.toString(),
                     date,
                     binding.etPassword.text.toString(),
                     binding.etConfirmPassword.text.toString()
-                ))
-                    launchContentFragment()
+                )
             }
         }
     }
@@ -94,39 +89,51 @@ class RegistrationFragment: Fragment() {
         binding.etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.resetErrorInputName()
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
         binding.etSurname.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.resetErrorInputSurname()
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
         binding.etPassword.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.resetErrorInputPassword()
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
         binding.etConfirmPassword.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.resetErrorInputConfirmPassword()
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
+        binding.etBirthHint.setOnClickListener {
+            viewModel.resetErrorInputBirth()
+        }
+
     }
 
     private fun observeViewModel() {
@@ -170,19 +177,16 @@ class RegistrationFragment: Fragment() {
             }
             binding.tilBirth.error = message
         }
+        viewModel.regIsValid.observe(viewLifecycleOwner) {
+            if (it) {
+                launchContentFragment()
+            }
+        }
     }
 
     private fun launchContentFragment() {
-        val newUser = User(
-            binding.etName.text.toString(),
-            binding.etSurname.text.toString(),
-            date,
-            binding.etPassword.text.toString(),
-            )
-        Log.d("RegistrationFragment", newUser.toString())
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, ContentFragment.newInstance(newUser))
-            .addToBackStack(null)
+            .replace(R.id.main_container, ContentFragment())
             .commit()
     }
 
@@ -197,14 +201,15 @@ class RegistrationFragment: Fragment() {
                 var curMonth = month
                 curMonth += 1
                 date = BirthDate(day, curMonth, year)
-                binding.btnDatePicker.text = date.toString()
+                binding.etBirthHint.setText(date.toString())
             }
         val cal = Calendar.getInstance()
         val year = cal.get(Calendar.YEAR)
         val month = cal.get(Calendar.MONTH)
         val day = cal.get(Calendar.DAY_OF_MONTH)
         val style = AlertDialog.THEME_HOLO_DARK
-        datePickerDialog = DatePickerDialog(requireContext(), style, dateSetListener, year, month, day)
+        datePickerDialog =
+            DatePickerDialog(requireContext(), style, dateSetListener, year, month, day)
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
     }
 
@@ -217,6 +222,4 @@ class RegistrationFragment: Fragment() {
         date = BirthDate(day, month, year)
     }
 
-    companion object {
-    }
 }
