@@ -15,4 +15,9 @@
     <string name="modal_window">Окно приветствия!</string>
     <string name="hello_user">Приветствую Вас, %s!</string>
     <string name="close_modal_window">Привет</string>
+    <string name="error_get_user">Ошибка при загрузке пользователя</string>
+    <string name="unlogin">Выйти из аккаунта?</string>
+    <string name="unlogin_desc">Вам придётся заново пройти регистрацию!</string>
+    <string name="exit_modal_window">Выйти</string>
+    <string name="cancel_modal_window">Отмена</string>
 </resources>
